@@ -7,7 +7,6 @@ module Registers(clk, clr, D, Q, Rin);
 	always @(posedge clr) begin
 		if(clr == 0) begin
 			Q <= 0;
-	
 		end
    end                                                   
 	

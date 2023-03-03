@@ -1,6 +1,6 @@
 // and datapath_tb.v file: <This is the filename>
 `timescale 1ns/10ps
-module datapath_tb;
+module add_tb;
 	reg PCout, Zlowout, Zhighout, HIout, LOout, MDRout, In_Portout, Cout, R0out, R1out, R2out, R3out, R4out, R5out, R6out, R7out, R8out, R9out, R10out, R11out, R12out,R13out, R14out, R15out; // add any other signals to see in your simulation
 	reg MARin, Zin, PCin, MDRin, IRin, Yin;
 	reg IncPC, Read, ADD, R0in, R1in,

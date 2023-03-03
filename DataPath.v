@@ -1,7 +1,7 @@
 module DataPath(input PCout, Zlowout, Zhighout, HIout, LOout, MDRout, In_Portout, Cout, 
 R0out, R1out, R2out, R3out, R4out, R5out, R6out, R7out, R8out, R9out, R10out, R11out, R12out,
-R13out, R14out, R15out, MARin, Zin_high, Zin_low, PCin, MDRin, IRin, Yin, IncPC, Read, AND, R0in, R1in,
-R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14in, R15in, Clock, Mdatain, clear);
+R13out, R14out, R15out, MARin, PCin, MDRin, IRin, Yin, IncPC, Read, AND, R0in, R1in,
+R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14in, R15in, Clock, clear, Zin_high, Zin_low, input [31:0] Mdatain);
 
 	// Wires for connecting
 	wire [31:0] r0_data;
@@ -25,8 +25,11 @@ R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14i
 	wire [31:0] HI_data;
 	wire [31:0] LO_data;
 	wire [31:0] Y_data;
-	wire [31:0] Z_data;
+	wire [31:0] Zlow_data;
+	wire [31:0] Zhigh_data;
 	wire [31:0] MDR_data;
+	wire [31:0] busmuxout_wire;
+
 
 	// Registers
 	//do we need a register for zlow and zhigh or just z
@@ -50,30 +53,32 @@ R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14i
 	Registers IR(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(IR_data), .Rin(IRin));
 	Registers PC(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(PC_data), .Rin(PCin));
 	
-	mdr_unit MDR(.BusMuxOut(busmuxout_wire), .Mdatain(Mdatain), .Q(MDR_data), .read(Read), .MDRin(MDRin), .Clock(clock), .clear(clear));	// Not sure about this line 
+	mdr_unit MDR(.BusMuxOut(busmuxout_wire), .Mdatain(Mdatain), .Q(MDR_data), .read(Read), .MDRin(MDRin), .Clock(Clock), .clear(clear));	// Not sure about this line 
 	
 	Registers HI(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(HI_data), .Rin(HIin));
 	Registers LO(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(LO_data), .Rin(LOin));
 	Registers Y(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(Y_data), .Rin(Yin));
-	Registers Zhigh(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(Z_data), .Rin(Zin_high));
-	Registers Zlow(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(Z_data), .Rin(Zin_low));
+	Registers Zhigh(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(Zhigh_data), .Rin(Zin_high));
+	Registers Zlow(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(Zlow_data), .Rin(Zin_low));
 	
 	
 	//Bus Connection
 	wire [4:0] select;
-	encoder encoder(.Sout(select), .Registers({R0out, R1out, R2out, R3out, R4out, R5out, R6out, R7out, R8out, R9out, R10out, R11out, R12out, R13out, 
-	R14out, R15out, PCout, Zlowout, Zhighout, MDRout, HIout, LOout, MDRout, In_Portout, Cout, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0}));
+	/*encoder encoder(.Sout(select), .Registers({R0in, R1in, R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, 
+	R14in, R15in, PCout, Zlowout, Zhighout, MDRin, HIout, LOout, MDRout, In_Portout, Cout, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0}));*/
+	
+	encoder encoder(.Sout(select), .Registers({ 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, Cout, In_Portout, MDRout, LOout, HIout, MDRin, 
+	Zhighout, Zlowout, PCout, R15in, R14in, R13in, R12in, R11in, R10in, R9in, R8in, R7in, R6in, R5in, R4in, R3in, R2in, R1in, R0in}));
 	
 	
 	//do again for mux
-	wire [31:0] busmuxout_wire;
 	wire [31:0] test1;
 	wire [31:0] test2;
 
 	Mux_32_1_if Mux_32_1_if(.BusMuxOut(busmuxout_wire), .BusMuxIn_R0(r0_data) , .BusMuxIn_R1(r1_data) ,.BusMuxIn_R2(r2_data) ,.BusMuxIn_R3(r3_data) ,.BusMuxIn_R4(r4_data), 
 	.BusMuxIn_R5(r5_data) ,.BusMuxIn_R6(r6_data) ,.BusMuxIn_R7(r7_data) ,.BusMuxIn_R8(r8_data) ,.BusMuxIn_R9(r9_data) ,.BusMuxIn_R10(r10_data), .BusMuxIn_R11(r11_data),
-	.BusMuxIn_R12(r12_data), .BusMuxIn_R13(r13_data), .BusMuxIn_R14(r14_data), .BusMuxIn_R15(r15_data), .BusMuxIn_HI(HI_data), .BusMuxIn_LO(LO_data), .BusMuxIn_Zhigh(Zin_high), 
-	.BusMuxIn_Zlow(Zin_low), 
+	.BusMuxIn_R12(r12_data), .BusMuxIn_R13(r13_data), .BusMuxIn_R14(r14_data), .BusMuxIn_R15(r15_data), .BusMuxIn_HI(HI_data), .BusMuxIn_LO(LO_data), .BusMuxIn_Zhigh(Zhigh_data), 
+	.BusMuxIn_Zlow(Zlow_data), 
 	.BusMuxIn_PC(PC_data), 
 	.BusMuxIn_MDR(MDR_data), 
 	.BusMuxIn_InPort(test2), 
