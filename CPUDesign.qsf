@@ -70,12 +70,6 @@ set_global_assignment -name VERILOG_FILE shift_R.v
 set_global_assignment -name VERILOG_FILE shift_L.v
 set_global_assignment -name VERILOG_FILE negate.v
 set_global_assignment -name VERILOG_FILE divide.v
-set_global_assignment -name VERILOG_FILE add_tb.v
-set_global_assignment -name VERILOG_FILE logicalOr_tb.v
-set_global_assignment -name VERILOG_FILE alu_tb.v
-set_global_assignment -name VERILOG_FILE subtract_tb.v
-set_global_assignment -name VERILOG_FILE multiply_tb.v
-set_global_assignment -name VERILOG_FILE division_tb.v
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top

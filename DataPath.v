@@ -1,6 +1,6 @@
 module DataPath(input PCout, Zlowout, Zhighout, HIout, LOout, MDRout, In_Portout, Cout, 
 R0out, R1out, R2out, R3out, R4out, R5out, R6out, R7out, R8out, R9out, R10out, R11out, R12out,
-R13out, R14out, R15out, MARin, PCin, MDRin, IRin, Yin, IncPC, Read, AND, R0in, R1in,
+R13out, R14out, R15out, MARin, PCin, MDRin, IRin, Yin, IncPC, Read, ADD, R0in, R1in,
 R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14in, R15in, Clock, clear, Zin_high, Zin_low, input [31:0] Mdatain);
 
 	// Wires for connecting
@@ -64,18 +64,19 @@ R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14i
 	
 	//Bus Connection
 	wire [4:0] select;
-	/*encoder encoder(.Sout(select), .Registers({R0in, R1in, R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, 
-	R14in, R15in, PCout, Zlowout, Zhighout, MDRin, HIout, LOout, MDRout, In_Portout, Cout, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0}));*/
+	/* encoder encoder(.Sout(select), .Registers({R0in, R1in, R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, 
+	R14in, R15in, PCout, Zlowout, Zhighout, MDRin, HIout, LOout, MDRout, In_Portout, Cout, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0})); */
 	
-	encoder encoder(.Sout(select), .Registers({ 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, Cout, In_Portout, MDRout, LOout, HIout, MDRin, 
-	Zhighout, Zlowout, PCout, R15in, R14in, R13in, R12in, R11in, R10in, R9in, R8in, R7in, R6in, R5in, R4in, R3in, R2in, R1in, R0in}));
+	encoder encoder(.Sout(select), .register({ 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, Cout, In_Portout, MDRout, LOout, HIout, 
+	Zhighout, Zlowout, PCout, R15out, R14out, R13out, R12out, R11out, R10out, R9out, R8out, R7out, R6out, R5out, R4out, R3out, R2out, R1out, R0out})); 
 	
 	
 	//do again for mux
 	wire [31:0] test1;
 	wire [31:0] test2;
+	wire [4:0] operation;
 
-	Mux_32_1_if Mux_32_1_if(.BusMuxOut(busmuxout_wire), .BusMuxIn_R0(r0_data) , .BusMuxIn_R1(r1_data) ,.BusMuxIn_R2(r2_data) ,.BusMuxIn_R3(r3_data) ,.BusMuxIn_R4(r4_data), 
+	Mux_32_1_if Mux_32_1_if(.BusMuxIn_R0(r0_data) , .BusMuxIn_R1(r1_data) , .BusMuxIn_R2(r2_data) , .BusMuxIn_R3(r3_data) , .BusMuxIn_R4(r4_data), 
 	.BusMuxIn_R5(r5_data) ,.BusMuxIn_R6(r6_data) ,.BusMuxIn_R7(r7_data) ,.BusMuxIn_R8(r8_data) ,.BusMuxIn_R9(r9_data) ,.BusMuxIn_R10(r10_data), .BusMuxIn_R11(r11_data),
 	.BusMuxIn_R12(r12_data), .BusMuxIn_R13(r13_data), .BusMuxIn_R14(r14_data), .BusMuxIn_R15(r15_data), .BusMuxIn_HI(HI_data), .BusMuxIn_LO(LO_data), .BusMuxIn_Zhigh(Zhigh_data), 
 	.BusMuxIn_Zlow(Zlow_data), 
@@ -83,6 +84,10 @@ R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14i
 	.BusMuxIn_MDR(MDR_data), 
 	.BusMuxIn_InPort(test2), 
 	.C_sign_ext(test1),
+	.BusMuxOut(busmuxout_wire),
 	.Sout(select));
+	
+	//FIX (split RC into 2 32 bit registers)
+	//alu alu(.brn_flag(), .RA(Y_data), .RB(busmuxout_wire), .opcode(operation), .RC(Zhigh_data));
 	endmodule
 	

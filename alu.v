@@ -7,7 +7,7 @@ module alu(
 
 	input wire [4:0] opcode,
 
-	output reg [63:0] RC 
+	output reg [63:0] RC
 );
 
 parameter Addition = 5'b00011, Subtraction = 5'b00100, Multiplication = 5'b01110, Division = 5'b01111, Shift_right = 5'b00101, Shift_left = 5'b00110, Rotate_right = 5'b00111, Rotate_left = 5'b01000, 
@@ -109,7 +109,9 @@ parameter Addition = 5'b00011, Subtraction = 5'b00100, Multiplication = 5'b01110
 
 			endcase
 	end
-	
+	// Splitting RC into 2 32 bit registers
+	//assign Zlo RC[31:0]
+	//assign Zhi RC[63:31]
 	//ALU Operations
 	add adder(.Ra(RA), .Rb(RB),.cin({1'd0}),.sum(adder_sum),.cout(adder_cout));
 	logicalAnd land(RA,RB,land_out);
@@ -122,6 +124,6 @@ parameter Addition = 5'b00011, Subtraction = 5'b00100, Multiplication = 5'b01110
 	shift_L shl(RA,shl_out);
 	shift_R shr(RA,shr_out);
 	negate neg(RA,neg_out);
-	divide_32 div(RA,RB, div_out);
+	divide div(RA, RB, div_out);
 
 endmodule
