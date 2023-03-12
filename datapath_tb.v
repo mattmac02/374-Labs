@@ -7,6 +7,7 @@ module datapath_tb;
 	reg Clock, clear;
 	reg Zin_high, Zin_low;
 	reg [31:0] Mdatain;
+	reg [3:0] operation;
 	
 	parameter	Default = 4'b0000, Reg_load1a = 4'b0001, Reg_load1b = 4'b0010, Reg_load2a = 4'b0011,
 					Reg_load2b = 4'b0100, Reg_load3a = 4'b0101, Reg_load3b = 4'b0110, T0 = 4'b0111,
@@ -16,7 +17,8 @@ module datapath_tb;
 DataPath DUT(PCout, Zlowout, Zhighout, HIout, LOout, MDRout, In_Portout, Cout, 
 R0out, R1out, R2out, R3out, R4out, R5out, R6out, R7out, R8out, R9out, R10out, R11out, R12out,
 R13out, R14out, R15out, MARin, PCin, MDRin, IRin, Yin, IncPC, Read, ADD, R0in, R1in,
-R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14in, R15in, Clock, clear, Zin_high, Zin_low, Mdatain);
+R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14in, R15in, Clock,
+clear, Zin_high, Zin_low, Mdatain, operation);
 
 // add test logic here
 initial
@@ -54,7 +56,7 @@ always @(Present_state) // do the required job in each state
 					PCout <= 0; clear <= 0; Zlowout <= 0; Zhighout <= 0; Cout <= 0; In_Portout <= 0; MDRout <= 0; LOout <= 0 ; HIout <= 0; // initialize the signals
 					{R15out, R14out, R13out, R12out, R11out, R10out, R9out, R8out, R7out, R6out, R5out, R4out, R3out, R2out, R1out, R0out} <= 0; MARin <= 0; Zin <= 0;
 					PCin <=0; MDRin <= 0; IRin <= 0; Yin <= 0;
-					IncPC <= 0; Read <= 0; ADD <= 0;
+					IncPC <= 0; Read <= 0; ADD <= 0; operation <= 00000;
 					R0in  <= 0; R1in <= 0; R2in <= 0; R3in <= 0;
 					R4in <= 0; R5in <= 0; R6in <= 0;
 					R1in <= 0; R2in <= 0; R3in <= 0;	Mdatain <= 32'h00000000;
@@ -94,7 +96,7 @@ always @(Present_state) // do the required job in each state
 			T1: begin
 					Zlowout <= 1; PCin <= 1; Read <= 1; MDRin <= 1;
 					Mdatain <= 32'h6918000; // opcode for “add R1, R2, R3”
-					#10 Zlowout <= 0; PCin <= 0; Read <= 0; MDRin <= 0;
+					#15 Zlowout <= 0; PCin <= 0; Read <= 0; MDRin <= 0;
 					/*
 					And = h28918000
 					Add = h6918000
@@ -110,19 +112,21 @@ always @(Present_state) // do the required job in each state
 			end
 			T2: begin
 					MDRout <= 1; IRin <= 1;
-					#10 MDRout <= 0; IRin <= 0;
+					#15 MDRout <= 0; IRin <= 0;
 			end
 			T3: begin
-					R2out <= 1; Yin <= 1;
+					#10 R2out <= 1; Yin <= 1;
 					#15 R2out <= 0; Yin <= 0;
 			end
 			T4: begin
-					R3out <= 1; ADD <= 1; Zin <= 1;
-					#25 R3out <= 0; Zin <= 0;
+					R3out <= 1;
+					#5 operation <= 1; 
+					#5 Zin <= 1;
+					#10 R3out <= 0; Zin <= 0;
 			end
 			T5: begin
 					Zlowout <= 1; R1in <= 1;
-					#25 Zlowout <= 0; R1in <= 0;
+					#10 Zlowout <= 0; R1in <= 0;
 			end
 		endcase
 	end

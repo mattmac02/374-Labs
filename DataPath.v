@@ -1,7 +1,7 @@
 module DataPath(input PCout, Zlowout, Zhighout, HIout, LOout, MDRout, In_Portout, Cout, 
 R0out, R1out, R2out, R3out, R4out, R5out, R6out, R7out, R8out, R9out, R10out, R11out, R12out,
 R13out, R14out, R15out, MARin, PCin, MDRin, IRin, Yin, IncPC, Read, ADD, R0in, R1in,
-R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14in, R15in, Clock, clear, Zin_high, Zin_low, input [31:0] Mdatain);
+R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14in, R15in, Clock, clear, Zin_high, Zin_low, input [31:0] Mdatain, input[3:0] operation);
 
 	// Wires for connecting
 	wire [31:0] r0_data;
@@ -74,7 +74,7 @@ R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14i
 	//do again for mux
 	wire [31:0] test1;
 	wire [31:0] test2;
-	wire [4:0] operation;
+	//wire [4:0] operation;
 
 	Mux_32_1_if Mux_32_1_if(.BusMuxIn_R0(r0_data) , .BusMuxIn_R1(r1_data) , .BusMuxIn_R2(r2_data) , .BusMuxIn_R3(r3_data) , .BusMuxIn_R4(r4_data), 
 	.BusMuxIn_R5(r5_data) ,.BusMuxIn_R6(r6_data) ,.BusMuxIn_R7(r7_data) ,.BusMuxIn_R8(r8_data) ,.BusMuxIn_R9(r9_data) ,.BusMuxIn_R10(r10_data), .BusMuxIn_R11(r11_data),
@@ -88,6 +88,7 @@ R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14i
 	.Sout(select));
 	
 	//FIX (split RC into 2 32 bit registers)
-	//alu alu(.brn_flag(), .RA(Y_data), .RB(busmuxout_wire), .opcode(operation), .RC(Zhigh_data));
+	//or would it be mdatain bc in dqatapath_tb the mdatain is where the opcode is
+	alu alu(.opCode(operation), .A(Y_data), .B(busmuxout_wire), .zOutLow(Zlow_data), .zOutHigh(Zhigh_data));
 	endmodule
 	
