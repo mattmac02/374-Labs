@@ -106,7 +106,7 @@ always @(Present_state) // do the required job in each state
 			end
 			T4: begin
 				R3out <= 1;
-				#5 operation <= 'b1000;
+				#5 operation <= 'b1001;
 				#5 Zin_low <= 1;
 				#10 Zin_low <= 0; R3out <= 0;
 			end
