@@ -1,6 +1,6 @@
 // and datapath_tb.v file: <This is the filename>
 `timescale 1ns/10ps
-module datapath_tb;
+module sub_tb;
 	reg PCout, Zlowout, Zhighout, HIout, LOout, MDRout, In_Portout, Cout, R0out, R1out, R2out, R3out, R4out, R5out, R6out, R7out, R8out, R9out, R10out, R11out, R12out,R13out, R14out, R15out; // add any other signals to see in your simulation
 	reg MARin, Zin, PCin, MDRin, IRin, Yin;
 	reg IncPC, Read, ADD, R0in, R1in, R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14in, R15in;
@@ -79,40 +79,32 @@ always @(Present_state) // do the required job in each state
 					R1in <= 0; R2in <= 0; R3in <= 0;	Mdatain <= 32'h00000000;
 			end
 			Reg_load1a: begin
-				Mdatain <= 32'd00000012;
+				Mdatain <= 32'b0110;
 				Read = 0; MDRin = 0; // the first zero is there for completeness
 				#10 Read <= 1; MDRin <= 1;
 				#15 Read <= 0; MDRin <= 0;
 			end
 			Reg_load1b: begin
-				#10 MDRout <= 1; R2in <= 1;
-				#15 MDRout <= 0; R2in <= 0; // initialize R2 with the value $12
+				#10 MDRout <= 1; R4in <= 1;
+				#15 MDRout <= 0; R4in <= 0; // initialize R4 with the value 0110 (6)
 			end
 			Reg_load2a: begin
-				Mdatain <= 32'd00000014;
-				#10 Read <= 1; MDRin <= 1; 
-				#15 Read <= 0; MDRin <= 0;
-			end
-			Reg_load2b: begin
-				#10 MDRout <= 1; R3in <= 1;
-				#15 MDRout <= 0; R3in <= 0; // initialize R3 with the value $14
-			end
-			Reg_load3a: begin
-				Mdatain <= 32'd00000018;
+				Mdatain <= 32'b1111;
+				Read = 0; MDRin = 0; // the first zero is there for completeness
 				#10 Read <= 1; MDRin <= 1;
 				#15 Read <= 0; MDRin <= 0;
 			end
-			Reg_load3b: begin
-				#10 MDRout <= 1; R1in <= 1;
-				#15 MDRout <= 0; R1in <= 0; // initialize R1 with the value $18
+			Reg_load2b: begin
+				#10 MDRout <= 1; R5in <= 1;
+				#15 MDRout <= 0; R5in <= 0; // initialize R5 with the value 1111 (15)
 			end
 			T0: begin // see if you need to de-assert these signals
 				PCout <= 1; MARin <= 1; IncPC <= 1; Zin_low <= 1;
-				#15 PCout <= 0; MARin <= 0; IncPC <= 0; Zin_low <= 0;
+				#10 PCout <= 0; MARin <= 0; IncPC <= 0; Zin_low <= 0;
 			end
 			T1: begin
 				Zlowout <= 1; PCin <= 1; Read <= 1; MDRin <= 1;
-				Mdatain <= 32'h28918000; // opcode for “and R1, R2, R3”
+				Mdatain <= 32'h8918000; // opcode for “and R1, R2, R3”
 				#15 Zlowout <= 0; PCin <= 0; Read <= 0; MDRin <= 0;
 			end
 			T2: begin
@@ -120,17 +112,18 @@ always @(Present_state) // do the required job in each state
 				#15 MDRout <= 0; IRin <= 0;
 			end
 			T3: begin
-				#10 R2out <= 1; Yin <= 1;
-				#15 R2out <= 0; Yin <= 0;
+				#10 R4out <= 1; Yin <= 1;
+				#15 R4out <= 0; Yin <= 0;
 			end
 			T4: begin
-				R3out <= 1;
-				#5 Zin_low <= 1;
-				#10 operation <= 'b1000;
-				#25 Zin_low <= 0; R3out <= 0;
+				R5out <= 1;
+				#5 operation <= 'b0001;
+				#5 Zin_low <= 1; 
+				#10 Zin_low <= 0; R5out <= 0; 
 			end
 			T5: begin
-				Zlowout <= 1; R1in <= 1;
+				Zlowout <= 1; R0in <= 1;
+				#10 Zlowout <= 0; R0in <= 0;
 			end
 		endcase
 	end

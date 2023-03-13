@@ -11,11 +11,10 @@ module alu(
 	reg temp;
 	multiply multiply(.x(A), .y(B), .out(zOut));
 	
-	always @ (opCode) begin
 	
+	always @ (opCode) begin
 		aValue = A;
 		bValue = B;
-		
 		case(opCode)
 			4'b1101: begin //Add
 				cOut = A + B;
@@ -44,7 +43,7 @@ module alu(
 			
 			4'b0101: begin //ShR
 				for(i=0;i<31;i=i+1) begin
-					cOut[i] = A[i+1];
+					cOut[i] = B[i+1];
 				end
 				cOut[31] = 0;
 			end
@@ -66,8 +65,9 @@ module alu(
 			4'b1000: begin //And
 				for(i=0;i<32;i=i+1) begin
 					cOut[i] = A[i] & B[i];
-				end
-			end
+				end 
+				//cOut = A & B;
+			end 
 			
 			4'b1001: begin //Or
 				for(i=0;i<32;i=i+1) begin
@@ -97,7 +97,7 @@ module alu(
 		endcase
 	end
 	
-	assign zOutLow = cOut;
+assign zOutLow = cOut;
 	assign zOutHigh = additional;
 	
 endmodule
