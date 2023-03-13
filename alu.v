@@ -10,6 +10,7 @@ module alu(
 	integer i;
 	reg temp;
 	multiply multiply(.x(A), .y(B), .out(zOut));
+	//add add (.Ra(A), .Rb(B), .sum(zOut), .cout(cOut));
 	
 	
 	always @ (opCode) begin
@@ -98,6 +99,6 @@ module alu(
 	end
 	
 assign zOutLow = cOut;
-	assign zOutHigh = additional;
+assign zOutHigh = additional;
 	
 endmodule

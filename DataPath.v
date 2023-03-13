@@ -1,7 +1,7 @@
 module DataPath(input PCout, Zlowout, Zhighout, HIout, LOout, MDRout, In_Portout, Cout, 
 R0out, R1out, R2out, R3out, R4out, R5out, R6out, R7out, R8out, R9out, R10out, R11out, R12out,
 R13out, R14out, R15out, MARin, PCin, MDRin, IRin, Yin, IncPC, Read, R0in, R1in,
-R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14in, R15in, Clock, clear, Zin_high, Zin_low, input [31:0] Mdatain, input[3:0] operation);
+R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14in, R15in, Clock, clear, Zin_high, Zin_low, HIin, LOin, input [31:0] Mdatain, input[3:0] operation);
 
 	// Wires for connecting
 	wire [31:0] r0_data;
