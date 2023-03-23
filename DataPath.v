@@ -1,7 +1,10 @@
 module DataPath(input PCout, Zlowout, Zhighout, HIout, LOout, MDRout, In_Portout, Cout, 
 R0out, R1out, R2out, R3out, R4out, R5out, R6out, R7out, R8out, R9out, R10out, R11out, R12out,
 R13out, R14out, R15out, MARin, PCin, MDRin, IRin, Yin, IncPC, Read, R0in, R1in,
-R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14in, R15in, Clock, clear, Zin_high, Zin_low, HIin, LOin, input [31:0] Mdatain, input[3:0] operation);
+R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14in, R15in, Clock, clear, Zin_high, Zin_low, HIin, LOin, input [31:0] Mdatain, input[3:0] operation, input wire Write);
+
+//add Write and ram_out
+
 
 	// Wires for connecting
 	wire [31:0] r0_data;
@@ -29,6 +32,10 @@ R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14i
 	wire [31:0] Zhigh_data;
 	wire [31:0] MDR_data;
 	wire [31:0] busmuxout_wire;
+	wire [31:0] BusMuxIn_MAR;
+	wire [31:0] RAM_out;
+	wire [8:0] addr;
+	//wire MARin;
 
 
 	// Registers
@@ -53,13 +60,25 @@ R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14i
 	Registers IR(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(IR_data), .Rin(IRin));
 	Registers PC(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(PC_data), .Rin(PCin));
 	
-	mdr_unit MDR(.BusMuxOut(busmuxout_wire), .Mdatain(Mdatain), .Q(MDR_data), .read(Read), .MDRin(MDRin), .Clock(Clock), .clear(clear));	// Not sure about this line 
+	//mdr_unit MDR(.BusMuxOut(busmuxout_wire), .Mdatain(Mdatain), .Q(MDR_data), .read(Read), .MDRin(MDRin), .Clock(Clock), .clear(clear));	// Not sure about this line 
+	
+	//New MDR Line
+	mdr_unit mdr_unit(.BusMuxOut(busmuxout_wire), .Mdatain(Mdatain), .read(Read), .MDRin(MDRin), .Clock(Clock), .clear(clear), .Q(MDR_data));
 	
 	Registers HI(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(HI_data), .Rin(HIin));
 	Registers LO(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(LO_data), .Rin(LOin));
 	Registers Y(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(Y_data), .Rin(Yin));
 	Registers Zhigh(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(Zhigh_data), .Rin(Zin_high));
 	Registers Zlow(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(Zlow_data), .Rin(Zin_low));
+	
+	
+	
+	//MAR unit
+	//marUnit MAR(.clk(Clock), .clr(clear), .MARin(MARin), .BusMuxOut(busmuxout_wire), .Q(BusMuxIn_MAR));
+	
+	
+	// BREAKS THE CODE (SOMETHING WITH THE ZHIGH_DATA AND ZLOW_DATA FANNING OUT TO 2 PLACES)
+	//ram ram(.address(addr), .clock(Clock), .data(MDR_data), .wren(Write), .q(Ram_out));
 	
 	
 	//Bus Connection

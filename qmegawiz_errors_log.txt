@@ -1,0 +1,13 @@
+
+
+C:/Users/19mam37/Downloads/374-Labs-main/374-Labs-main/ram.vhd
+
+Mar 23 02PM:50:32>: The following design file, which has identical name but a different extension 
+from the specified variation file, already exists in the working directory:
+
+ram.v
+
+This may create a conflict of design files and/or lead to undesirable side
+effects.
+
+Is it OK to continue file generation?
