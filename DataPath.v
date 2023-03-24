@@ -35,13 +35,17 @@ R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14i
 	wire [31:0] BusMuxIn_MAR;
 	wire [31:0] RAM_out;
 	wire [8:0] addr;
+	wire Baout;
 	//wire MARin;
 
 
 	// Registers
 	//do we need a register for zlow and zhigh or just z
+	wire[31:0] r0Out;
+	Registers r0(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(r0Out), .Rin(R0in));
+	assign r0_data = {32{!Baout}} & r0Out;
 	
-	Registers r0(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(r0_data), .Rin(R0in));
+	
 	Registers r1(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(r1_data), .Rin(R1in));
 	Registers r2(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(r2_data), .Rin(R2in));
 	Registers r3(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(r3_data), .Rin(R3in));
