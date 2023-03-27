@@ -2,23 +2,23 @@
 `timescale 1ns/10ps
 module add_tb;
 	reg PCout, Zlowout, Zhighout, HIout, LOout, MDRout, In_Portout, Cout, R0out, R1out, R2out, R3out, R4out, R5out, R6out, R7out, R8out, R9out, R10out, R11out, R12out,R13out, R14out, R15out; // add any other signals to see in your simulation
-	reg MARin, Zin, PCin, MDRin, IRin, Yin;
+	reg MARin, Zin, PCin, MDRin, IRin, Yin, inPort_input;
 	reg IncPC, Read, ADD, R0in, R1in, R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14in, R15in;
 	reg Clock, clear;
 	reg Zin_high, Zin_low;
 	reg [31:0] Mdatain;
-	reg [3:0] operation;
+	reg [3:0] operation, operation2;
 	
 	parameter	Default = 4'b0000, Reg_load1a = 4'b0001, Reg_load1b = 4'b0010, Reg_load2a = 4'b0011,
 					Reg_load2b = 4'b0100, Reg_load3a = 4'b0101, Reg_load3b = 4'b0110, T0 = 4'b0111,
 					T1 = 4'b1000, T2 = 4'b1001, T3 = 4'b1010, T4 = 4'b1011, T5 = 4'b1100;
 	reg [3:0] Present_state = Default;
 	
-DataPath DUT(PCout, Zlowout, Zhighout, HIout, LOout, MDRout, In_Portout, Cout, 
+DataPath DUT(Gra, Grb, Grc, PCout, Zlowout, Zhighout, HIout, LOout, MDRout, In_Portout, outPortenable, inPortenable, Cout, 
 R0out, R1out, R2out, R3out, R4out, R5out, R6out, R7out, R8out, R9out, R10out, R11out, R12out,
 R13out, R14out, R15out, MARin, PCin, MDRin, IRin, Yin, IncPC, Read, R0in, R1in,
 R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14in, R15in, Clock,
-clear, Zin_high, Zin_low, HIin, LOin, Mdatain, operation);
+clear, Zin_high, Zin_low, HIin, LOin, Mdatain, inPort_input, operation, operation2, Write, outport_out);
 
 // add test logic here
 initial
@@ -61,7 +61,7 @@ always @(Present_state) // do the required job in each state
 					R1in <= 0; R2in <= 0; R3in <= 0;	Mdatain <= 32'h00000000;
 			end
 			Reg_load1a: begin
-				Mdatain <= 32'b0110;
+				Mdatain <= 32'b10011;
 				Read = 0; MDRin = 0; // the first zero is there for completeness
 				#10 Read <= 1; MDRin <= 1;
 				#15 Read <= 0; MDRin <= 0;

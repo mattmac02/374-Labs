@@ -1,9 +1,11 @@
-module DataPath(input PCout, Zlowout, Zhighout, HIout, LOout, MDRout, In_Portout, Cout, 
+module DataPath(input Gra, Grb, Grc, PCout, Zlowout, Zhighout, HIout, LOout, MDRout, In_Portout, outPortenable, inPortenable, Cout, 
 R0out, R1out, R2out, R3out, R4out, R5out, R6out, R7out, R8out, R9out, R10out, R11out, R12out,
 R13out, R14out, R15out, MARin, PCin, MDRin, IRin, Yin, IncPC, Read, R0in, R1in,
-R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14in, R15in, Clock, clear, Zin_high, Zin_low, HIin, LOin, input [31:0] Mdatain, input[3:0] operation, input wire Write);
+R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14in, R15in, Clock, clear, Zin_high, Zin_low, HIin, 
+LOin, input [31:0] Mdatain, input [31:0] inPort_input, input[3:0] operation, input[3:0] operation2, input wire Write, output [31:0] outport_out, input wire Baout, input wire r_in);
 
 //add Write and ram_out
+
 
 
 	// Wires for connecting
@@ -30,13 +32,41 @@ R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14i
 	wire [31:0] Y_data;
 	wire [31:0] Zlow_data;
 	wire [31:0] Zhigh_data;
+	wire [31:0] zhigh_2;
+	wire [31:0] zlow_2;
 	wire [31:0] MDR_data;
-	wire [31:0] busmuxout_wire;
+	wire [31:0] Ram_out;
+	wire [31:0] busmuxout_wire, Hibusmuxout_wire, Lobusmuxout_wire;
+	wire [31:0] c_data_out;
+	wire [31:0] BusMuxInPort;
+	wire brFlag;
+	wire ConIn;
+	wire serout;
 	wire [31:0] BusMuxIn_MAR;
+	wire [31:0] c_sign;
+	wire conIn;
 	wire [31:0] RAM_out;
 	wire [8:0] addr;
-	wire Baout;
+	
 	//wire MARin;
+	
+	reg [15:0] enableReg;
+	reg [15:0] Rout;
+	wire [15:0] enableReg_IR, Rout_IR;
+
+	initial begin
+		Rout = 16'b0;
+		enableReg = 16'b0;
+	end
+
+		//sets register enable and out signals based on provided info from IR
+		always@(*)begin			
+			if (enableReg_IR) enableReg <= enableReg_IR; 
+			//else enableReg <= enableReg_CPU;
+
+			if (Rout_IR) Rout <= Rout_IR; 
+			else Rout <= 16'b0;	
+		end 
 
 
 	// Registers
@@ -72,17 +102,22 @@ R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14i
 	Registers HI(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(HI_data), .Rin(HIin));
 	Registers LO(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(LO_data), .Rin(LOin));
 	Registers Y(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(Y_data), .Rin(Yin));
-	Registers Zhigh(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(Zhigh_data), .Rin(Zin_high));
-	Registers Zlow(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(Zlow_data), .Rin(Zin_low));
+	Registers Zhigh(.clk(Clock), .clr(clear), .D(Hibusmuxout_wire), .Q(Zhigh_data), .Rin(Zin_high));
+	Registers Zlow(.clk(Clock), .clr(clear), .D(Lobusmuxout_wire), .Q(Zlow_data), .Rin(Zin_low));
+	Registers inport(.clk(Clock), .clr(clear), .D(inPort_input), .Q(BusMuxInPort), .Rin(inPortenable));
+	Registers outport(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(outport_out), .Rin(outPortenable));
 	
+	//Select and Encode
+	selectandencoder selectandencoder(.IRin(IR_data), .Gra(Gra), .Grb(Grb), .Grc(Grc), .Rin(r_in), .Rout(serout), .BAout(Baout), .opcode(operation2), .C_sign_extended(c_sign), .RegIn(), .RegOut());
 	
+	//CONFF
+	CONFF CONFF(.q(brFlag), .CONin(ConIn), .clr(clear), .IRbits(IR_data), .busMuxOut(busmuxout_wire));
 	
 	//MAR unit
-	//marUnit MAR(.clk(Clock), .clr(clear), .MARin(MARin), .BusMuxOut(busmuxout_wire), .Q(BusMuxIn_MAR));
-	
+	marUnit marUnit(.clk(Clock), .clr(clear), .MARin(MARin), .BusMuxOut(busmuxout_wire), .Q(BusMuxIn_MAR));
 	
 	// BREAKS THE CODE (SOMETHING WITH THE ZHIGH_DATA AND ZLOW_DATA FANNING OUT TO 2 PLACES)
-	//ram ram(.address(addr), .clock(Clock), .data(MDR_data), .wren(Write), .q(Ram_out));
+	ram ram(.address(addr), .clock(Clock), .data(MDR_data), .wren(Write), .q(Ram_out));
 	
 	
 	//Bus Connection
@@ -95,8 +130,6 @@ R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14i
 	
 	
 	//do again for mux
-	wire [31:0] test1;
-	wire [31:0] test2;
 	//wire [4:0] operation;
 
 	Mux_32_1_if Mux_32_1_if(.BusMuxIn_R0(r0_data) , .BusMuxIn_R1(r1_data) , .BusMuxIn_R2(r2_data) , .BusMuxIn_R3(r3_data) , .BusMuxIn_R4(r4_data), 
@@ -105,13 +138,13 @@ R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14i
 	.BusMuxIn_Zlow(Zlow_data), 
 	.BusMuxIn_PC(PC_data), 
 	.BusMuxIn_MDR(MDR_data), 
-	.BusMuxIn_InPort(test2), 
-	.C_sign_ext(test1),
+	.BusMuxIn_InPort(BusMuxInPort), 
+	.C_sign_ext(c_sign),
 	.BusMuxOut(busmuxout_wire),
 	.Sout(select));
 	
 	//FIX (split RC into 2 32 bit registers)
 	//or would it be mdatain bc in dqatapath_tb the mdatain is where the opcode is
-	alu alu(.opCode(operation), .A(Y_data), .B(busmuxout_wire), .zOutLow(Zlow_data), .zOutHigh(Zhigh_data));
+	alu alu(.opCode(operation), .A(Y_data), .B(busmuxout_wire), .flag(brFlag), .zOutLow(Lobusmuxout_wire), .zOutHigh(Hibusmuxout_wire));
 	endmodule
 	

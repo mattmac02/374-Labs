@@ -2,6 +2,7 @@
 module alu(
 	input [3:0] opCode,
 	input [31:0] A, B,
+	input flag,
 	output [31:0] zOutLow, zOutHigh
 );
 
@@ -95,6 +96,14 @@ module alu(
 				end
 				cOut[31] = temp;
 			end
+			5'b10011:begin
+			if(flag==1)begin
+				cOut=A+B;
+				end
+			else begin
+				cOut=A;
+				end
+				end
 		endcase
 	end
 	

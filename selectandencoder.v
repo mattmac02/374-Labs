@@ -1,4 +1,4 @@
-module selectandencode(
+module selectandencoder(
 input [31:0] IRin,
 input Gra, Grb, Grc, Rin, Rout, BAout,
 output [4:0] opcode,
