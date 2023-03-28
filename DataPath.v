@@ -2,7 +2,7 @@ module DataPath(input Gra, Grb, Grc, PCout, Zlowout, Zhighout, HIout, LOout, MDR
 R0out, R1out, R2out, R3out, R4out, R5out, R6out, R7out, R8out, R9out, R10out, R11out, R12out,
 R13out, R14out, R15out, MARin, PCin, MDRin, IRin, Yin, IncPC, Read, R0in, R1in,
 R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14in, R15in, Clock, clear, Zin_high, Zin_low, HIin, 
-LOin, input [31:0] Mdatain, input [31:0] inPort_input, input[3:0] operation, input[3:0] operation2, input wire Write, output [31:0] outport_out, input wire Baout, input wire r_in);
+LOin, input [31:0] Mdatain, input [31:0] inPort_input, output[4:0] operation, input wire Write, output [31:0] outport_out, input wire Baout, input wire r_in);
 
 //add Write and ram_out
 
@@ -42,13 +42,11 @@ LOin, input [31:0] Mdatain, input [31:0] inPort_input, input[3:0] operation, inp
 	wire brFlag;
 	wire ConIn;
 	wire serout;
-	wire [31:0] BusMuxIn_MAR;
+	wire [8:0] BusMuxIn_MAR;
 	wire [31:0] c_sign;
 	wire conIn;
 	wire [31:0] RAM_out;
-	wire [8:0] addr;
 	
-	//wire MARin;
 	
 	reg [15:0] enableReg;
 	reg [15:0] Rout;
@@ -108,16 +106,16 @@ LOin, input [31:0] Mdatain, input [31:0] inPort_input, input[3:0] operation, inp
 	Registers outport(.clk(Clock), .clr(clear), .D(busmuxout_wire), .Q(outport_out), .Rin(outPortenable));
 	
 	//Select and Encode
-	selectandencoder selectandencoder(.IRin(IR_data), .Gra(Gra), .Grb(Grb), .Grc(Grc), .Rin(r_in), .Rout(serout), .BAout(Baout), .opcode(operation2), .C_sign_extended(c_sign), .RegIn(), .RegOut());
+	selectandencoder selectandencoder(.IRin(IR_data), .Gra(Gra), .Grb(Grb), .Grc(Grc), .Rin(r_in), .Rout(serout), .BAout(Baout), .opcode(operation), .C_sign_extended(c_sign), .RegIn(enableReg_IR), .RegOut(Rout_IR));
 	
 	//CONFF
-	CONFF CONFF(.q(brFlag), .CONin(ConIn), .clr(clear), .IRbits(IR_data), .busMuxOut(busmuxout_wire));
+	CONFF CONFF(.q(brFlag), .CONin(ConIn), .clr(clear), .IRbits(IR_data[20:19]), .busMuxOut(busmuxout_wire));
 	
 	//MAR unit
 	marUnit marUnit(.clk(Clock), .clr(clear), .MARin(MARin), .BusMuxOut(busmuxout_wire), .Q(BusMuxIn_MAR));
 	
 	// BREAKS THE CODE (SOMETHING WITH THE ZHIGH_DATA AND ZLOW_DATA FANNING OUT TO 2 PLACES)
-	ram ram(.address(addr), .clock(Clock), .data(MDR_data), .wren(Write), .q(Ram_out));
+	ram ram(.address(BusMuxIn_MAR[8:0]), .clock(Clock), .data(MDR_data), .wren(Write), .q(Ram_out));
 	
 	
 	//Bus Connection
