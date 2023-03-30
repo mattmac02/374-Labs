@@ -1,3 +1,4 @@
+`timescale 1ns / 10ps
 module mdr_unit(input [31:0] BusMuxOut, input [31:0] Mdatain, input read, MDRin, Clock, clear, output wire [31:0] Q);
 	reg[31:0] input_data;
 

@@ -1,20 +1,21 @@
 `timescale 1ns/10ps
 module alu(
-	input [4:0] opCode,
+	input [31:0] operation,
 	input [31:0] A, B,
 	input flag,
 	output [31:0] zOutLow, zOutHigh
 );
-
+	reg [4:0] opCode;
 	reg [31:0] cOut, additional, aValue, bValue;
 	wire [63:0] zOut;
 	integer i;
 	reg temp;
 	multiply multiply(.x(A), .y(B), .out(zOut));
 	//add add (.Ra(A), .Rb(B), .sum(zOut), .cout(cOut));
+
 	
-	
-	always @ (opCode) begin
+	always @ (*) begin
+		opCode = operation[31:27];
 		aValue = A;
 		bValue = B;
 		case(opCode)
