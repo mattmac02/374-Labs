@@ -105,8 +105,8 @@ module alu(
 				end
 				end
 			5'b00000:begin //load
-				//cOut[31:0] <= A + B;
-				cOut[31:0] <= 5'd50000;
+				cOut[31:0] <= A + B;
+				//cOut[31:0] <= 5'd50000;
 				additional[31:0] <= 32'd0;
 			end
 			5'b00001:begin //loadi

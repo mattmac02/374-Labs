@@ -3,7 +3,7 @@
 module ld_tb; 	
 	reg PCout, Zlowout, Zhighout, HIout, LOout, MDRout, In_Portout, Cout, R0out, R1out, R2out, R3out, R4out, R5out, R6out, R7out, R8out, R9out, R10out, R11out, R12out,R13out, R14out, R15out; // add any other signals to see in your simulation
 	reg MARin, Zin, PCin, MDRin, IRin, Yin, outPortenable, Gra, Grb, Grc, Write, r_in;
-	reg IncPC, Read, ADD, R0in, R1in, R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14in, R15in, HIin, LOin, Baout;
+	reg IncPC, Read, ConIn, R0in, R1in, R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14in, R15in, HIin, LOin, Baout;
 	reg Clock, clear, CON_enable;
 	reg Zin_high, Zin_low;
 	reg [31:0] Mdatain;
@@ -19,7 +19,7 @@ reg	[3:0] Present_state = Default;
 
 DataPath DUT(Gra, Grb, Grc, PCout, Zlowout, Zhighout, HIout, LOout, MDRout, In_Portout, outPortenable, inPortenable, Cout, 
 R0out, R1out, R2out, R3out, R4out, R5out, R6out, R7out, R8out, R9out, R10out, R11out, R12out,
-R13out, R14out, R15out, MARin, PCin, MDRin, IRin, Yin, IncPC, Read, R0in, R1in,
+R13out, R14out, R15out, MARin, PCin, MDRin, IRin, Yin, IncPC, Read,ConIn, R0in, R1in,
 R2in, R3in, R4in, R5in, R6in, R7in, R8in, R9in, R10in, R11in, R12in, R13in, R14in, R15in, Clock,
 clear, Zin_high, Zin_low, HIin, LOin, Mdatain, inPort_input, operation, Write, outport_out, Baout, r_in);
 
@@ -55,42 +55,57 @@ begin
 					MDRin <= 0; IRin <= 0;Yin <= 0; Write<=0;
 					Gra<=0; Grb<=0; Grc<=0;
 				   Baout<=0; Cout<=0; In_Portout<=0; Zhighout<=0; LOout<=0; HIout<=0; 
-					HIin<=0; LOin<=0; Read<=0;
+					HIin<=0; LOin<=0; Read<=0; r_in <= 0;
 					
 
 		end
 		T0: begin//see if you need to de-assert these signals	
-				clear <= 0; IncPC <= 1; Read <= 1;
-				PCout<= 1; MARin <= 1; 	//increaase PC and send address to MAR and save in Z
+				#5 PCout <= 1;
+					 MARin <= 1;
+					//#20 PCout <=0; MARin <= 0;
 		end
-		T1: begin	//loadss RAM output into MDR 									
-				PCout<= 0; MARin <= 0; Zin_low <= 0; IncPC <= 0;
-				Mdatain	<= 32'h08800007; 				//ldi r1 7			//ldi r2 2
-				Read <= 1; MDRin <= 1; 		//Get instruction from mem
-				PCin <= 1; 
+		T1: begin	//loadss RAM output into MDR 	
+				PCout <=0; MARin<=0;		
+				#5 Read <= 1;
+					 MDRin <= 1;
+					Zlowout<=1;
+					//#10 Read <= 0; MDRin <= 0;
 		end
 		T2: begin
-				Zlowout<= 0;  MDRin <= 0; Read <= 0; PCin <= 0;
-				MDRout<= 1; IRin <= 1;			 //save inst to IR
+		MDRin<=0; Read<=0;Zlowout<=0;
+			MDRout <= 1; IRin <= 1;
+				#10 MDRout <= 1; IRin <=1;PCin<=1;
 		end
 		T3: begin
-				MDRout<= 0; IRin <= 0;	
-				Grb <= 1; Baout <= 1; Yin <= 1;				//put value of B into Y
+		IRin<=0;MDRout<=0;
+			Grb<=1;
+			Baout <=1;
+			#5 Yin<=1;
+				//#20 Grb<=0;Baout<=0;Yin<=0;
 		end
 		T4: begin
-				Grb <= 0; Baout <= 0; Yin <= 0;
-				Zin_low <= 1; Cout <= 1;												//save output of alu
+		Grb<=0;Baout<=0;Yin<=0;
+			Cout<=1;
+			#5 Zin_high<=1; Zin_low<=1;
+				//#20 Cout<=0; Zin_high<= 0; Zin_low<=0;
 		end
 		T5: begin
-				Zin_low <= 0;
-				Zlowout<= 1; MARin <= 1;							//Save output of alu to MAR
+		Cout<=0; Zin_high<= 0; Zin_low<=0;
+				Zlowout <=1;
+				#5 MARin <=1;
+					//#20 Zlowout<=0;MARin<=0;
 		end
 		T6: begin
-				Zlowout<= 0; MARin <= 0;
-				Read <=1; MDRin <= 1; //Mdatain <= 						//MDR reads address in mem
+		Zlowout<=0;MARin<=0;
+				#5 Read<=1;
+				 MDRin <=1;
+				//#30 Read<=0;MDRin<=0;
 		end
 		T7: begin	
-				Gra <= 1; r_in <= 1; MDRout <= 1;					//save data from MDR to A
+		 Read<=0;MDRin<=0;
+			MDRout<=1;
+			#5 Gra<=1;
+			r_in<=1;
 		end
 	endcase
 end
