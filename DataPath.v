@@ -146,6 +146,6 @@ LOin, input [31:0] Mdatain, input [31:0] inPort_input, output[4:0] operation, in
 	
 	//FIX (split RC into 2 32 bit registers)
 	//or would it be mdatain bc in dqatapath_tb the mdatain is where the opcode is
-	alu alu(.operation(operation), .A(Y_data), .B(busmuxout_wire), .flag(brFlag), .zOutLow(Lobusmuxout_wire), .zOutHigh(Hibusmuxout_wire));
+	alu alu(.operation(IR_data), .A(Y_data), .B(busmuxout_wire), .flag(brFlag), .zOutLow(Lobusmuxout_wire), .zOutHigh(Hibusmuxout_wire));
 	endmodule
 	
