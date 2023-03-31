@@ -1,4 +1,4 @@
-module Registers(clk, clr, D, Q, Rin);
+module Registers #(parameter qInitial = 0)(clk, clr, D, Q, Rin);
 	input [31:0] D;
 	input clk, clr, Rin;
 	output [31:0] Q;

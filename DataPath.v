@@ -1,6 +1,5 @@
 module DataPath(input Gra, Grb, Grc, PCout, Zlowout, Zhighout, HIout, LOout, MDRout, In_Portout, outPortenable, inPortenable, Cout, 
-R0out, R1out, R2out, R3out, R4out, R5out, R6out, R7out, R8out, R9out, R10out, R11out, R12out,
-R13out, R14out, R15out, MARin, PCin, MDRin, IRin, Yin, IncPC, Read, ConIn, Clock, clear, Zin_high, Zin_low, HIin, 
+ MARin, PCin, MDRin, IRin, Yin, IncPC, Read, ConIn, Clock, clear, Zin_high, Zin_low, HIin, 
 LOin, input [31:0] Mdatain, input [31:0] inPort_input, output[4:0] operation, input wire Write, output [31:0] outport_out, input wire Baout, input wire r_in);
 
 //add Write and ram_out
@@ -109,14 +108,12 @@ LOin, input [31:0] Mdatain, input [31:0] inPort_input, output[4:0] operation, in
 	//CONFF
 	CONFF CONFF(.branch(brFlag), .ConIn(ConIn), .IR(IR_data), .BusMuxIn(busmuxout_wire));
 	
-	SelectEncode sel(.IR(IR_data), .Gra(Gra), .Grb(Grb), .Grc(Grc), .Rin(r_in), .Rout(serout), .BAout(Baout), .C_sign_e(c_sign), .R0in(R0in), .R0out(SR0out), .R1in(R1in), .R1out(SR1out), .R2in(R2in), .R2out(SR2out), .R3in(R3in), .R3out(SR3out), .R4in(R4in), .R4out(SR4out), .R5in(R5in), 
-	.R5out(SR5out), .R6in(R6in), .R6out(SR6out), .R7in(R7in), .R7out(SR7out), .R8in(R8in), .R8out(SR8out), .R9in(R9in), .R9out(SR9out), .R10in(R10in), .R10out(SR10out), .R11in(R11in), .R11out(SR11out), .R12in(R12in), .R12out(SR12out), .R13in(R13in), .R13out(SR13out), .R14in(R14in), .R14out(SR14out), .R15in(R15in), .R15out(SR15out));
-	
+	SelectEncode sel(.IR(IR_data), .Gra(Gra), .Grb(Grb), .Grc(Grc), .Rin(r_in), .Rout(serout), .BAout(Baout), .C_sign_e(c_sign), .R0in(R0in), .R0out(R0out), .R1in(R1in), .R1out(R1out), .R2in(R2in), .R2out(R2out), .R3in(R3in), .R3out(R3out), .R4in(R4in), .R4out(R4out), .R5in(R5in), 
+	.R5out(R5out), .R6in(R6in), .R6out(R6out), .R7in(R7in), .R7out(R7out), .R8in(R8in), .R8out(R8out), .R9in(R9in), .R9out(R9out), .R10in(R10in), .R10out(R10out), .R11in(R11in), .R11out(R11out), .R12in(R12in), .R12out(R12out), .R13in(R13in), .R13out(R13out), .R14in(R14in), .R14out(R14out), .R15in(R15in), .R15out(R15out));
 	
 	//MAR unit
 	marUnit marUnit(.clk(Clock), .clr(clear), .MARin(MARin), .BusMuxOut(busmuxout_wire), .Q(BusMuxIn_MAR));
-	
-	// BREAKS THE CODE (SOMETHING WITH THE ZHIGH_DATA AND ZLOW_DATA FANNING OUT TO 2 PLACES)
+
 	RamFinal ram(.address(BusMuxIn_MAR), .clock(Clock), .data(MDR_data), .wren(Write), .q(Ram_out));
 	//memRam RAM(.dataIn(BusMuxIn_MDR), .address(BusMuxIn_MAR), .we(Ram_enable), .clk(Clock), .dataOut(Ram_out))
 	

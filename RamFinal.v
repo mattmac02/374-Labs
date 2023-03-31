@@ -86,12 +86,7 @@ module RamFinal (
 	defparam
 		altsyncram_component.clock_enable_input_a = "BYPASS",
 		altsyncram_component.clock_enable_output_a = "BYPASS",
-`ifdef NO_PLI
-		altsyncram_component.init_file = "milf.rif"
-`else
-		altsyncram_component.init_file = "milf.hex"
-`endif
-,
+		altsyncram_component.init_file = "milf.hex",
 		altsyncram_component.intended_device_family = "Cyclone III",
 		altsyncram_component.lpm_hint = "ENABLE_RUNTIME_MOD=NO",
 		altsyncram_component.lpm_type = "altsyncram",

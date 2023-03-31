@@ -1,7 +1,7 @@
 `timescale 1ns / 10ps
 
 module ld_tb; 	
-	reg PCout, Zlowout, Zhighout, HIout, LOout, MDRout, In_Portout, Cout, R0out, R1out, R2out, R3out, R4out, R5out, R6out, R7out, R8out, R9out, R10out, R11out, R12out,R13out, R14out, R15out; // add any other signals to see in your simulation
+	reg PCout, Zlowout, Zhighout, HIout, LOout, MDRout, In_Portout, Cout; // add any other signals to see in your simulation
 	reg MARin, Zin, PCin, MDRin, IRin, Yin, outPortenable, Gra, Grb, Grc, Write, r_in;
 	reg IncPC, Read, ConIn, HIin, LOin, Baout;
 	reg Clock, clear, CON_enable;
@@ -16,8 +16,7 @@ parameter	Default = 4'b0000, T0= 4'b0111, T1= 4'b1000,T2= 4'b1001, T3= 4'b1010, 
 reg	[3:0] Present_state = Default;
 
 DataPath DUT(Gra, Grb, Grc, PCout, Zlowout, Zhighout, HIout, LOout, MDRout, In_Portout, outPortenable, inPortenable, Cout, 
-R0out, R1out, R2out, R3out, R4out, R5out, R6out, R7out, R8out, R9out, R10out, R11out, R12out,
-R13out, R14out, R15out, MARin, PCin, MDRin, IRin, Yin, IncPC, Read,ConIn, Clock,
+ MARin, PCin, MDRin, IRin, Yin, IncPC, Read,ConIn, Clock,
 clear, Zin_high, Zin_low, HIin, LOin, Mdatain, inPort_input, operation, Write, outport_out, Baout, r_in);
 
 initial 
@@ -27,7 +26,7 @@ initial
 		forever #10 Clock = ~ Clock;
 end
 
-always @(posedge Clock)//finite state machine; if clock rising-edge
+always @(negedge Clock)//finite state machine; if clock rising-edge
 begin
 	case (Present_state)
 		Default			:	#40 Present_state = T0;
