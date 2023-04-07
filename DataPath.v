@@ -134,8 +134,10 @@ LOin, input [31:0] Mdatain, input [31:0] inPort_input, output[4:0] operation, in
 	//wire [4:0] operation;
 
 	Mux_32_1_if Mux_32_1_if(.BusMuxIn_R0(r0_data) , .BusMuxIn_R1(r1_data) , .BusMuxIn_R2(r2_data) , .BusMuxIn_R3(r3_data) , .BusMuxIn_R4(r4_data), 
-	.BusMuxIn_R5(r5_data) ,.BusMuxIn_R6(r6_data) ,.BusMuxIn_R7(r7_data) ,.BusMuxIn_R8(r8_data) ,.BusMuxIn_R9(r9_data) ,.BusMuxIn_R10(r10_data), .BusMuxIn_R11(r11_data),
-	.BusMuxIn_R12(r12_data), .BusMuxIn_R13(r13_data), .BusMuxIn_R14(r14_data), .BusMuxIn_R15(r15_data), .BusMuxIn_HI(HI_data), .BusMuxIn_LO(LO_data), .BusMuxIn_Zhigh(Zhigh_data), 
+	.BusMuxIn_R5(r5_data) ,.BusMuxIn_R6(r6_data) ,.BusMuxIn_R7(r7_data) ,.BusMuxIn_R8(r8_data) ,.BusMuxIn_R9(r9_data) ,
+				.BusMuxIn_R10(r10_data), .BusMuxIn_R11(r11_data),
+	.BusMuxIn_R12(r12_data), .BusMuxIn_R13(r13_data), .BusMuxIn_R14(r14_data), .BusMuxIn_R15(r15_data), .BusMuxIn_HI(HI_data),
+				.BusMuxIn_LO(LO_data), .BusMuxIn_Zhigh(Zhigh_data), 
 	.BusMuxIn_Zlow(Zlow_data), 
 	.BusMuxIn_PC(PC_data), 
 	.BusMuxIn_MDR(MDR_data), 
